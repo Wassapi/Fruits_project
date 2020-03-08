@@ -27,7 +27,7 @@ model.fc = nn.Linear(num_ftrs, 16)
 model.load_state_dict(torch.load('/model_resnet18_comp.sh'))
 model = model.to(device)
 
-bot = telebot.TeleBot('1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA')
+bot = telebot.TeleBot(TOKEN)
 language = 'ru'
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
