@@ -19,7 +19,7 @@ from dataset import Fruits
 Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
               4:'Kiwi',5:'Mango',6:'Muskmelon',7:'Orange',8:'Peach',
               9:'Pear',10:'Persimmon',11:'Pitaya',12:'Plumу',13:'Pomegranet',14:'Tomato', 15: ' Not a fruit'}
-
+!mkdir '/demos'
 model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
@@ -42,7 +42,7 @@ def get_text_messages(message):
 
 @bot.message_handler(content_types=['photo'])
 def predict_fruit(photo):
-    load_folder = os.path.join(os.getcwd(), 'fruits_project/demostration')
+    load_folder = '/demos'
   
     try:
         file_id = photo.json['photo'][1]['file_id']
