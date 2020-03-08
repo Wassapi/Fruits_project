@@ -20,13 +20,12 @@ Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
               4:'Kiwi',5:'Mango',6:'Muskmelon',7:'Orange',8:'Peach',
               9:'Pear',10:'Persimmon',11:'Pitaya',12:'Plumу',13:'Pomegranet',14:'Tomato', 15: ' Not a fruit'}
 
-model = models.resnet152(pretrained=False)
+model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
 model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'))
-model = model.to(device)
 
-TOKEN = 'YOUR TOKEN'
+TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'
 bot = telebot.TeleBot(TOKEN)
 language = 'ru'
 @bot.message_handler(commands=['start', 'help'])
@@ -67,8 +66,7 @@ def predict_fruit(photo):
     model.eval()
     predictions = []
     for k, (inputs, gt, id) in enumerate(load_loader):
-        inputs_gpu = inputs.to(device)
-        prediction = model(inputs_gpu)
+        prediction = model(inputs)
         _, prediction_semi = torch.max(prediction, 1)
         predictions += prediction_semi.tolist()
     bot.reply_to(photo, [Fruit_list[i] for i in predictions])
