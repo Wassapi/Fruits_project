@@ -14,7 +14,6 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
 from dataset import Fruits
 
 Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
@@ -24,9 +23,10 @@ Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
 model = models.resnet152(pretrained=False)
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
-model.load_state_dict(torch.load('/model_resnet18_comp.sh'))
+model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'))
 model = model.to(device)
 
+TOKEN = 'YOUR TOKEN'
 bot = telebot.TeleBot(TOKEN)
 language = 'ru'
 @bot.message_handler(commands=['start', 'help'])
@@ -43,14 +43,14 @@ def get_text_messages(message):
 
 @bot.message_handler(content_types=['photo'])
 def predict_fruit(photo):
-    load_folder = '/content/demonstration'
+    load_folder = os.path.join(os.getcwd(), 'fruits_project/demostration')
   
     try:
         file_id = photo.json['photo'][1]['file_id']
     except IndexError:
         file_id = photo.json['photo'][0]['file_id']
     file_info = bot.get_file(file_id)
-    file = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format('1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA', file_info.file_path))
+    file = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, file_info.file_path))
     out = open(load_folder + '/img.jpg', "wb")
     out.write(file.content)
     out.close()
