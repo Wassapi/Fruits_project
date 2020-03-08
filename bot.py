@@ -25,7 +25,7 @@ num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
 model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'))
 
-TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'
+TOKEN = 'YOUR_TOKEN'
 bot = telebot.TeleBot(TOKEN)
 language = 'ru'
 @bot.message_handler(commands=['start', 'help'])
