@@ -23,7 +23,7 @@ Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
 model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
-model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'))
+model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'), map_location=torch.device('cpu')))
 
 TOKEN = 'YOUR_TOKEN'
 bot = telebot.TeleBot(TOKEN)
