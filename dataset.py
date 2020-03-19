@@ -1,12 +1,22 @@
 import numpy as np
-import pandas as pd
-from torch.utils.data import Dataset, SubsetRandomSampler, SequentialSampler, Sampler
+from torch.utils.data import Dataset, SubsetRandomSampler, Sampler
 import os
 from PIL import Image
 
-#Creating our own dataset
+fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
+              4:'Kiwi', 5:'Mango', 6:'Muskmelon', 7:'Orange', 8:'Peach',
+              9:'Pear', 10:'Persimmon', 11:'Pitaya', 12:'Plumу',
+              13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}
+
 class Fruits(Dataset):
-    def __init__(self, folder, transform = None, production = False):
+    """Создает датасет из всех изображений в папке и её подпапок"""
+    def __init__(self, folder, transform=None, production=False):
+        """ Создает список всех файлов в папке с датасетом
+        Args:
+            folder (str): Имя папки в фотографиями для датасета.
+            transform (torch.transforms): Преобразования, которые делаются с файлами фотографий (default None).
+            production (bool): False работа с размеченными файлами True с неразмеченными (default False).
+        """
         self.transform = transform
         self.folder = folder
         self.listname = []
@@ -19,59 +29,53 @@ class Fruits(Dataset):
         self.production = production
         
     def __len__(self):
+        """Возвращает количество файлов в датасете."""
         return len(self.listname)
     
-    def __getitem__(self, index):        
+    def __getitem__(self, index):
+        """Возвращает изображение, метку класса и путь до файла изображения по индексу.
+        Args:
+            index (int): Индекс элемента в датасете.
+        """
         img_id = None
         img_id = self.listname[index]
         img = Image.open(img_id).convert('RGB')
-        if self.production == True:
+        if self.production == True: # True мы используем, когда не знаем реальной метки класса
+                                    # (используется в демонстрации и телеграм боте).
             y = 77
-        else:       
-            if 'Apple' in img_id: 
-                y = 0
-            elif 'Banana' in img_id:
-                y = 1
-            elif 'Carambola' in img_id:
-                y = 2
-            elif 'Guava' in img_id:
-                y = 3
-            elif 'Kiwi' in img_id:
-                y = 4
-            elif 'Mango' in img_id:
-                y = 5
-            elif 'Muskmelon' in img_id:
-                y = 6
-            elif 'Orange' in img_id:
-                y = 7
-            elif 'Peach' in img_id:
-                y = 8
-            elif 'Pear' in img_id:
-                y = 9
-            elif 'Persimmon' in img_id:
-                y = 10
-            elif 'Pitaya' in img_id:
-                y = 11
-            elif 'Plumу' in img_id :
-                y = 12
-            elif 'Pomegranet' in img_id:
-                y = 13
-            elif 'Tomato' in img_id:
-                y = 14
-            else:
+        else: # В остальных случаях мы можем получить реальную метку класса из названия изображения.
+            inv_fruit_list = dict(zip(fruit_list.values(), fruit_list.keys()))
+            class_title = str.split(img_id, sep= '/')[1] # Получаем имя класса как названия папки, в которой хранится значение. 
+            if class_title == 'Other':
                 y = 15
-        
+            else:
+                #Получем метку класса по его имени.
+                try:
+                    y = inv_fruit_list[class_title]
+                except KeyError:
+                    raise KeyError(
+                        'Присутствует папка с неизвестным классом в папке с данными:', 
+                        class_title)
+
         if self.transform:
             img = self.transform(img)
         return img, y, img_id
 
+    
 class SubsetSampler(Sampler):
+    """Класс для сэмплера, который возвращает индексы по порядку."""
 
     def __init__(self, indices):
+        """Присваивает список индексов.
+        Args:
+            indices (list): Список индексов.
+        """
         self.indices = indices
 
     def __iter__(self):
+        """Итерация по списку индексов."""
         return (self.indices[i] for i in range(len(self.indices)))
 
     def __len__(self):
+        """Возвращает количество индексов в списке."""
         return len(self.indices)

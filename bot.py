@@ -1,3 +1,4 @@
+import numpy as np
 import telebot
 import datetime
 import pytz
@@ -8,53 +9,66 @@ import os
 from PIL import Image
 import torch
 from torchvision import models, utils
-from torch.utils.data import Dataset, SubsetRandomSampler, SequentialSampler, Sampler
+from torch.utils.data import Dataset, SubsetRandomSampler, Sampler
 from torchvision import transforms
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
 import matplotlib.pyplot as plt
 from dataset import Fruits
 
-Photo_folder = 'demonstration'
-os. makedirs(Photo_folder)
+photo_folfer = 'demonstration'
+os. makedirs(photo_folder)
+load_folder = os.getcwd() +  '/' + photo_folfer   # Папка для загрузки изображений.
+fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
+              4:'Kiwi', 5:'Mango', 6:'Muskmelon', 7:'Orange', 8:'Peach',
+              9:'Pear', 10:'Persimmon', 11:'Pitaya', 12:'Plumу',
+              13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}  # Словарь с классами фруктов.
+TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'   # API token Телеграма.
+bot = telebot.TeleBot(TOKEN)
+language = 'ru'
 
-Fruit_list = {0:'Apple',1:'Banana',2:'Carambola',3:'Guava',
-              4:'Kiwi',5:'Mango',6:'Muskmelon',7:'Orange',8:'Peach',
-              9:'Pear',10:'Persimmon',11:'Pitaya',12:'Plumу',13:'Pomegranet',14:'Tomato', 15: ' Not a fruit'}
+
+# Задаем модель, загружаем к ней веса.
 model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 16)
 model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'), map_location=torch.device('cpu')))
 
-TOKEN = 'YOUR_TOKEN'
-bot = telebot.TeleBot(TOKEN)
-language = 'ru'
+
+# Определяем функции для телеграм бота
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    text = ('Привет я бот, который знает какой фрукт изображен на фото.\n\nЯ уже умею различать следующие фрукты: ' 
-            + (', '.join(list(Fruit_list.values())[:-1])) 
+    """Отвечает на  запросы /start и /help, рассказывая о функционале бота."""
+    text = ('Привет я бот, который знает какой фрукт изображен на фото.\n\n
+            Я уже умею различать следующие фрукты: ' 
+            + (', '.join(list(fruit_list.values())[:-1])) 
             + '\n\nДля начала работы вышлите фото.\n\n')
     chat_id = message.from_user.id
     bot.send_message(chat_id, text)
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
+    """Обрабатывает все текстовые сообщения, отвечая запросом фотографии фрукта."""
     bot.reply_to(message, "Высылайте фото фрукта, чтобы я смог его распознать")
 
 @bot.message_handler(content_types=['photo'])
 def predict_fruit(photo):
-    load_folder = os.getcwd() + '/' + Photo_folder
+    """Функция возвращает предсказанный класс фрукта как ответ на сообщение пользователя с фотографией."""
+    load_folder = os.getcwd() + '/' + photo_folder # Определяем папку, куда будет загружено изображение.
     try:
-        file_id = photo.json['photo'][1]['file_id']
+        file_id = photo.json['photo'][1]['file_id'] # Получем id для загрузки изображения.
     except IndexError:
         file_id = photo.json['photo'][0]['file_id']
     file_info = bot.get_file(file_id)
-    file = requests.get('https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, file_info.file_path))
+    file = requests.get(
+        'https://api.telegram.org/file/bot{0}/{1}'.format(TOKEN, 
+                                                          file_info.file_path)
+    )
     out = open(load_folder + '/img.jpg', "wb")
     out.write(file.content)
-    out.close()
-    orig_dataset = Fruits(load_folder, production = True)
+    out.close() # Записываем изображение в файл, который затем прогоняется через модель.
+    
+    orig_dataset = Fruits(load_folder, production = True)   # Создаем датасеты с загруженным изображением.
     load_dataset = Fruits(load_folder, 
                           transform=transforms.Compose([                           
                           transforms.Resize((224, 224)),
@@ -68,7 +82,8 @@ def predict_fruit(photo):
     predictions = []
     for k, (inputs, gt, id) in enumerate(load_loader):
         prediction = model(inputs)
-        _, prediction_semi = torch.max(prediction, 1)
+        _, prediction_semi = torch.max(prediction, 1)  # Получем метки класса для загруженного изображения.
         predictions += prediction_semi.tolist()
-    bot.reply_to(photo, [Fruit_list[i] for i in predictions])
-bot.polling(none_stop=True)
+    bot.reply_to(photo, [fruit_list[i] for i in predictions])
+
+bot.polling(none_stop=True) # Постоянно проверяем наличие новых сообщений.
