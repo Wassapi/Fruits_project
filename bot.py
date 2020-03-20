@@ -23,7 +23,7 @@ fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
               4:'Kiwi', 5:'Mango', 6:'Muskmelon', 7:'Orange', 8:'Peach',
               9:'Pear', 10:'Persimmon', 11:'Pitaya', 12:'Plumу',
               13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}  # Словарь с классами фруктов.
-TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'   # API token Телеграма.
+TOKEN = 'YOUR_TOKEN'   # API token Телеграма.
 bot = telebot.TeleBot(TOKEN)
 language = 'ru'
 
