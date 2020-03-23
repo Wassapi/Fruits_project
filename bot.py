@@ -23,7 +23,7 @@ fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
               9:'Pear', 10:'Persimmon', 11:'Pitaya', 12:'Plumу',
               13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}  # Dict with class names and indices.
 classes_nuber = len(fruit_list)
-TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'   # API Telegram token.
+TOKEN = 'YOUR_TOKEN'   # API Telegram token.
 bot = telebot.TeleBot(TOKEN)
 
 if os.path.exists('photo_folder') == False:
