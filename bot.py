@@ -26,7 +26,7 @@ classes_nuber = len(fruit_list)
 TOKEN = 'YOUR_TOKEN'   # API Telegram token.
 bot = telebot.TeleBot(TOKEN)
 
-if os.path.exists('photo_folder') == False:
+if os.path.exists(photo_folder) == False:
     os.makedirs(photo_folder)
 
 
@@ -44,7 +44,7 @@ def send_welcome(message):
     text = ('Hello, I am fruit bot and I can recognize photo with fruits.\n\n' 
             + 'I already know following fruits: ' 
             + (', '.join(list(fruit_list.values())[:-1])) 
-            + '\n\nSend me the picture of the fruit.\n\n')
+            + '.\n\nSend me the picture of the fruit.\n\n')
     chat_id = message.from_user.id
     bot.send_message(chat_id, text)
 
