@@ -1,29 +1,29 @@
-# Телеграм бот для распознавания фруктов.
+# Telegram bot for fruit recognition.
 
-Данный проект включает в себя обработку фотографий, создание датасета, тренировку конволюционной нейронной сети для решения задачи классификации фруктов на фотографии и использование натренированной нейронной сети в телеграм боте для распознавания фруктов на фотографиях пользователей.
+Often during vacation in tropical counties people meet the problem that there are a lot of different unknown fruits in the local market. Locals are not always able to explain which fruit it is. So this bot will recognize fruit for you!
 
-## Структура проекта:
+## Project parts:
 
 ### dataset.py
 
-Обработка данных, создание датасета, определние меток классов.
+Images loading in dataset, class labeling.
 
 ### training.py
 
-Процесс тренировки нейронной сети.
+Neuron network train process.
 
 ### utils.py
 
-Вспомогательныt функции для визуализации изображений или демонстрации работы сети.
+Supporting function for image visualization with class name.
 
-### Fruits_general.ipynb
+### fruits_general.ipynb
 
-С использованием остальных модулей обработка данных, задание архитектуры нейронной сети  и подбор гиперпараметров, оценка качества точности работы сети на тестовых данных, выгрузка весов модели. 
+Neuron network training piplene: data loading, setting neuron network architecture, hyperparameters searching, assessment of network accuracy on test data and saving of model weights.
 
-### Demo.ipynb
+### demo.ipynb
 
-Демонстрация функционала работы нейронной сети.
+Demonstration of neuron network functions.
 
 ### bot.py
 
-Скрипт для запуска на удаленном сервере для работы телеграм бота. Предсказывает класс фрукта по фотографии, отвечает на текстовые сообщения по шаблону.
+Scrypt for bot launcing on a remote serverPredicts a fruit class by photo, responds to text messages by template.

@@ -9,13 +9,13 @@ fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
               13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}
 
 class Fruits(Dataset):
-    """Создает датасет из всех изображений в папке и её подпапок"""
+    """Create dataset from all images in the folder and subfolders"""
     def __init__(self, folder, transform=None, production=False):
-        """ Создает список всех файлов в папке с датасетом
+        """Create list of all paths of the files.
         Args:
-            folder (str): Имя папки в фотографиями для датасета.
-            transform (torch.transforms): Преобразования, которые делаются с файлами фотографий (default None).
-            production (bool): False работа с размеченными файлами True с неразмеченными (default False).
+            folder (str): Folder name with all images.
+            transform (torch.transforms): Augmentation for images (default None).
+            production (bool): False for training mode True for predicting class for unallocated images (default False).
         """
         self.transform = transform
         self.folder = folder
@@ -29,32 +29,31 @@ class Fruits(Dataset):
         self.production = production
         
     def __len__(self):
-        """Возвращает количество файлов в датасете."""
+        """Return number of images in the dataset."""
         return len(self.listname)
     
     def __getitem__(self, index):
-        """Возвращает изображение, метку класса и путь до файла изображения по индексу.
+        """Return image, class label and file path.
         Args:
-            index (int): Индекс элемента в датасете.
+            index (int): Indice of the element in the dataset.
         """
         img_id = None
         img_id = self.listname[index]
         img = Image.open(img_id).convert('RGB')
-        if self.production == True: # True мы используем, когда не знаем реальной метки класса
-                                    # (используется в демонстрации и телеграм боте).
-            y = 77
-        else: # В остальных случаях мы можем получить реальную метку класса из названия изображения.
+        if self.production == True: # True when we can't get ground truth label (for new images).
+            y = 'Class to be predicted'
+        else: # For training mode ground truth can be get from folder name (every class in data is in the seperate folder).
             inv_fruit_list = dict(zip(fruit_list.values(), fruit_list.keys()))
-            class_title = str.split(img_id, sep= '/')[1] # Получаем имя класса как названия папки, в которой хранится значение. 
+            class_title = str.split(img_id, sep= '/')[1] # Get class name as name of the folder where image is located (only during training). 
             if class_title == 'Other':
                 y = 15
             else:
-                #Получем метку класса по его имени.
+                # Get class label from class name.
                 try:
                     y = inv_fruit_list[class_title]
                 except KeyError:
                     raise KeyError(
-                        'Присутствует папка с неизвестным классом в папке с данными:', 
+                        'Folder with unknown class:', 
                         class_title)
 
         if self.transform:
@@ -63,19 +62,19 @@ class Fruits(Dataset):
 
     
 class SubsetSampler(Sampler):
-    """Класс для сэмплера, который возвращает индексы по порядку."""
+    """Class for Sampler, which return indices in order."""
 
     def __init__(self, indices):
-        """Присваивает список индексов.
+        """Create list of indices.
         Args:
-            indices (list): Список индексов.
+            indices (list): List of indices.
         """
         self.indices = indices
 
     def __iter__(self):
-        """Итерация по списку индексов."""
+        """Iteration for list."""
         return (self.indices[i] for i in range(len(self.indices)))
 
     def __len__(self):
-        """Возвращает количество индексов в списке."""
+        """Return number of indices in the list."""
         return len(self.indices)

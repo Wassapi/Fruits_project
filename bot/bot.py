@@ -16,47 +16,49 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 from dataset import Fruits
 
-photo_folfer = 'demonstration'
-os. makedirs(photo_folder)
-load_folder = os.getcwd() +  '/' + photo_folfer   # Папка для загрузки изображений.
+photo_folder = 'demonstration'
+load_folder = os.getcwd() +  '/' + photo_folder   # Folder for image loading.
 fruit_list = {0:'Apple', 1:'Banana', 2:'Carambola', 3:'Guava',
               4:'Kiwi', 5:'Mango', 6:'Muskmelon', 7:'Orange', 8:'Peach',
               9:'Pear', 10:'Persimmon', 11:'Pitaya', 12:'Plumу',
-              13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}  # Словарь с классами фруктов.
-TOKEN = 'YOUR_TOKEN'   # API token Телеграма.
+              13:'Pomegranet', 14:'Tomato', 15:'Not a fruit'}  # Dict with class names and indices.
+classes_nuber = len(fruit_list)
+TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'   # API Telegram token.
 bot = telebot.TeleBot(TOKEN)
-language = 'ru'
+
+if os.path.exists('photo_folder') == False:
+    os.makedirs(photo_folder)
 
 
-# Задаем модель, загружаем к ней веса.
+# Loading of saved model weights.
 model = models.resnet18(pretrained=False)
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 16)
+model.fc = nn.Linear(num_ftrs, classes_nuber)
 model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'fruits_project/model_resnet18_comp.sh'), map_location=torch.device('cpu')))
 
 
-# Определяем функции для телеграм бота
+# Functions for telegram bot
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    """Отвечает на  запросы /start и /help, рассказывая о функционале бота."""
-    text = ('Привет я бот, который знает какой фрукт изображен на фото.\n\n
-            Я уже умею различать следующие фрукты: ' 
+    """Responds to requests  /start и /help, indroduction to functionality."""
+    text = ('Hello, I am fruit bot and I can recognize photo with fruits.\n\n' 
+            + 'I already know following fruits: ' 
             + (', '.join(list(fruit_list.values())[:-1])) 
-            + '\n\nДля начала работы вышлите фото.\n\n')
+            + '\n\nSend me the picture of the fruit.\n\n')
     chat_id = message.from_user.id
     bot.send_message(chat_id, text)
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    """Обрабатывает все текстовые сообщения, отвечая запросом фотографии фрукта."""
-    bot.reply_to(message, "Высылайте фото фрукта, чтобы я смог его распознать")
+    """Responds text messages by requesting of the photo."""
+    bot.reply_to(message, "Send me the picture of the fruit.")
 
 @bot.message_handler(content_types=['photo'])
 def predict_fruit(photo):
-    """Функция возвращает предсказанный класс фрукта как ответ на сообщение пользователя с фотографией."""
-    load_folder = os.getcwd() + '/' + photo_folder # Определяем папку, куда будет загружено изображение.
+    """Return name of the fruit class as reply to the picture sent by user."""
+    load_folder = os.getcwd() + '/' + photo_folder # Folder for image loading.
     try:
-        file_id = photo.json['photo'][1]['file_id'] # Получем id для загрузки изображения.
+        file_id = photo.json['photo'][1]['file_id'] # Get ID of the picture for loading.
     except IndexError:
         file_id = photo.json['photo'][0]['file_id']
     file_info = bot.get_file(file_id)
@@ -66,9 +68,9 @@ def predict_fruit(photo):
     )
     out = open(load_folder + '/img.jpg', "wb")
     out.write(file.content)
-    out.close() # Записываем изображение в файл, который затем прогоняется через модель.
+    out.close() # Write image to the file in the folder.
     
-    orig_dataset = Fruits(load_folder, production = True)   # Создаем датасеты с загруженным изображением.
+    orig_dataset = Fruits(load_folder, production = True)   # Create dataset with loaded images.
     load_dataset = Fruits(load_folder, 
                           transform=transforms.Compose([                           
                           transforms.Resize((224, 224)),
@@ -82,8 +84,8 @@ def predict_fruit(photo):
     predictions = []
     for k, (inputs, gt, id) in enumerate(load_loader):
         prediction = model(inputs)
-        _, prediction_semi = torch.max(prediction, 1)  # Получем метки класса для загруженного изображения.
+        _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
     bot.reply_to(photo, [fruit_list[i] for i in predictions])
 
-bot.polling(none_stop=True) # Постоянно проверяем наличие новых сообщений.
+bot.polling(none_stop=True) # Check new messages.

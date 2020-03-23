@@ -8,12 +8,12 @@ from dataset import Fruits
 device = torch.device("cuda:0")
 
 def visualize_samples(dataset, indices, title=None, count=10):
-    """Показывает изображения из датасета под указанными индексами.
+    """Show images with given indices.
     Args:
-        dataset (torch.utils.data.Dataset): Датасет.
-        indices (list): Список индексов.
-        title (str): Название для группы изображений (default None).
-        count (int): Количество выводимых изображений (default 10).
+        dataset (torch.utils.data.Dataset): Dataset.
+        indices (list): List of indices.
+        title (str): Title for group of images (default None).
+        count (int): Number of images to be shown (default 10).
         
     """
     plt.figure(figsize=(count*3,3))
@@ -32,42 +32,42 @@ def visualize_samples(dataset, indices, title=None, count=10):
 
 def predicting_fruit(model, folder='/demonstration', visualize=True, count=10, 
                      title=None, title_list=None):
-    """Функция для демонстрации.
+    """Demonstrate results of the model.
        
-       Получает целевую метку для всех изображений в папке и выводит метку вместе с изображением.
+       Show image with predicted class name.
        
        Args:
-           model (torch.nn): Модель нейронной сети.
-           folder (str): Папка с изображениями (default /demonstration).
-           visualize (bool): Требуется ли вывод изображений с предсказанными метками (default True).
-           count (int): Количество выводимых изображений (default 10).
-           title (str): Название для группы изображений (default None).
-           title_list (dict): Словарь со значениями классов и их метками (default None).
+           model (torch.nn): Model of neuron network.
+           folder (str): Folder with images (default /demonstration).
+           visualize (bool): Should images be shown or not (default True).
+           count (int): Number of images to be shown (default 10).
+           title (str): Title for group of images (default None).
+           title_list (dict): Dict with class names and indices (default None).
            
     """ 
-    # Датасет используется для вывода изображений.
+    # Dataset for image showing.
     orig_dataset = Fruits(folder, production=True) 
-    # Датасет используется моделью для получения меток класса.
+    # Dataset for predicting of class labels.
     load_dataset = Fruits(folder,                  
                           transform=transforms.Compose([
-                          transforms.Resize((224, 224)), # Изменяем разрешение на необходимое для работы сети.
+                          transforms.Resize((224, 224)), # Size for network.
                           transforms.ToTensor(),
                           transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                std=[0.229, 0.224, 0.225])
-                          ]), production = True  # True, так как исходные данные не содержат данные о метке класа.
+                          ]), production = True  # True because there is no infromation about ground truth class label.
                       )
     load_loader = torch.utils.data.DataLoader(load_dataset, batch_size=1)
     
     model.eval()
-    predictions = [] # В этот лист будут добавляться метки классов
+    predictions = [] # List for predicted class labels.
     
-    for k, (inputs, gt, id) in enumerate(load_loader):
-        inputs_gpu = inputs.to(device) # Отправляем данные на GPU.
+    for inputs, _, _ in load_loader:
+        inputs_gpu = inputs.to(device) # Sends to GPU.
         prediction = model(inputs_gpu) 
-        _, prediction_semi = torch.max(prediction, 1)  # Получаем предсказанные метки классов.
+        _, prediction_semi = torch.max(prediction, 1)  # Gets predicted class labels.
         predictions += prediction_semi.tolist()
     
-    if visualize == True:  # Выводит изображения, если в функции аргумент True.
+    if visualize == True:  # Shows images if argument is True.
         plt.figure(figsize=(count*3,3))
         display_indices = list(range(len(orig_dataset)))
         if title:
@@ -75,7 +75,7 @@ def predicting_fruit(model, folder='/demonstration', visualize=True, count=10,
         
         for i, index in enumerate(display_indices):    
             x, _, _ = orig_dataset[index]
-            y = title_list[predictions[index]]  # Вместе с изображением выводится предсказанная метка класса.
+            y = title_list[predictions[index]]  # Images will be shown with predicted class names.
             plt.subplot(1,count,i+1)
             plt.title("Label: %s" % y)
             plt.imshow(x)
@@ -85,10 +85,10 @@ def predicting_fruit(model, folder='/demonstration', visualize=True, count=10,
     return [title_list[i] for i in predictions]
 
 def imshow(inp, title=None):
-    """Функция для вывода изображений из тензора.
+    """Function for showing image from tensor.
     Args:
-        inp (torch.tensor): Тензор изображения.
-        title (str): Название для группы изображений (default None).
+        inp (torch.tensor): Tensor.
+        title (str): Title for group of images (default None).
     """
     inp = inp.numpy().transpose((1, 2, 0))
     mean = np.array([0.485, 0.456, 0.406])
