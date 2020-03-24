@@ -80,7 +80,7 @@ def predict_fruit(photo):
         prediction = model(inputs)
         _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
-    bot.reply_to(photo, [fruit_list[i] + '/n/n '+ fruit_description[i] for i in predictions])
+    bot.reply_to(photo, [fruit_list[i] + '\n\n '+ fruit_description[i] for i in predictions])
 
 
 bot.polling(none_stop=True)  # Check new messages.
