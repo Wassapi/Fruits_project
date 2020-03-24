@@ -105,3 +105,30 @@ fruit_description = {
     14: fruit_nutrition('Yes', '74 kJ (18 kcal)', '3.9 g', '2.6 g', '1.2 g', '0.2 g', '0.9 g'),
     15: 'Write me if it is edible ^__-'
 }
+
+phrases = [
+    'Say ‘hello’ to my little friend ',
+    'Heeeeere’s Johnny with ',
+    'I know you are , but what am I?',
+    'Surely, you can’t be serious.” – “I am serious, and don’t call me ”',
+    'Dammit, man, I’m a DOCTOR, not a – ',
+    'WHAT IS YOUR MAJOR MALFUNCTION ',
+    'There can be only one ',
+    'THIS IS ',
+    'Houston, we have a problem ',
+    'Get away from her, you ',
+    'Take your stinking paws off me, you damn dirty ',
+    'I’m too old for this ',
+    'Why so ',
+    'I feel the need…the need for ',
+    'I am your ',
+    'I see dead ',
+    'It’s alive! It’s alive! IT’S ',
+    'I ate his liver with some fava beans and a nice ',
+    'They may take our lives, but they’ll never take…OUR ',
+    'It’s a tr.. ',
+    'I’m the king of the ',
+    'Pay no attention to that man behind the ',
+    'Forget it, Jake. It’s ',
+    'Hasta la vista… '
+]

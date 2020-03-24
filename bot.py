@@ -7,8 +7,9 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from torchvision import models
 from torchvision import transforms
+from random import random
 
-from dataset import Fruits, fruit_list, fruit_description
+from dataset import Fruits, fruit_list, fruit_description, phrases
 
 photo_folder = 'demonstration'
 load_folder = os.getcwd() + '/' + photo_folder  # Folder for image loading.
@@ -80,7 +81,11 @@ def predict_fruit(photo):
         prediction = model(inputs)
         _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
-    bot.reply_to(photo, [fruit_list[i] + '\n\n '+ fruit_description[i] for i in predictions])
+    bot.reply_to(photo,
+                 [random.choice(phrases)
+                  + fruit_list[i]
+                  + '\n\n'
+                  + fruit_description[i] for i in predictions])
 
 
 bot.polling(none_stop=True)  # Check new messages.
