@@ -86,7 +86,7 @@ def predict_fruit(photo):
                  [random.choice(phrases)
                   + fruit_list[i]
                   + '\n\n'
-                  + fruit_description[i] for i in predictions])
+                  + str(fruit_description[i]) for i in predictions])
 
 
 bot.polling(none_stop=True)  # Check new messages.
