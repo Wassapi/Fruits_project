@@ -1,5 +1,6 @@
 import os
 
+import random
 import requests
 import telebot
 import torch
@@ -7,7 +8,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from torchvision import models
 from torchvision import transforms
-from random import random
+
 
 from dataset import Fruits, fruit_list, fruit_description, phrases
 
