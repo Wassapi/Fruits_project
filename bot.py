@@ -14,7 +14,7 @@ photo_folder = 'demonstration'
 load_folder = os.getcwd() + '/' + photo_folder  # Folder for image loading.
 
 classes_number = len(fruit_list)
-TOKEN = '1136427355:AAH8iz4vH4DPm1eEW1iJuO9pEpK93tCX7ZA'  # API Telegram token.
+TOKEN = 'YOUR_TOKEN'  # API Telegram token.
 bot = telebot.TeleBot(TOKEN)
 
 if not os.path.exists(photo_folder):
@@ -80,7 +80,7 @@ def predict_fruit(photo):
         prediction = model(inputs)
         _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
-    bot.reply_to(photo, [fruit_list[i] + fruit_description[i] for i in predictions])
+    bot.reply_to(photo, [fruit_list[i] + '/n/n '+ fruit_description[i] for i in predictions])
 
 
 bot.polling(none_stop=True)  # Check new messages.

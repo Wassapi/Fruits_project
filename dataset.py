@@ -8,7 +8,7 @@ from collections import namedtuple
 fruit_list = {0: 'Apple', 1: 'Banana', 2: 'Carambola', 3: 'Guava',
               4: 'Kiwi', 5: 'Mango', 6: 'Muskmelon', 7: 'Orange', 8: 'Peach',
               9: 'Pear', 10: 'Persimmon', 11: 'Pitaya', 12: 'Plum',
-              13: 'Pomegranate', 14: 'Tomato', 15: 'Not a fruit'}
+              13: 'Pomegranate', 14: 'Tomato', 15: 'It can be either unknown type of fruit or not a fruit.'}
 
 
 class Fruits(Dataset):
@@ -103,5 +103,5 @@ fruit_description = {
     12: fruit_nutrition('Yes', '192 kJ (46 kcal)', '11.42 g', '9.92 g', '1.4 g', '0.28 g', '0.7 g'),
     13: fruit_nutrition('Yes', '346 kJ (83 kcal)', '18.7 g', '13.67 g', '4 g', '1.17 g', '1.67 g'),
     14: fruit_nutrition('Yes', '74 kJ (18 kcal)', '3.9 g', '2.6 g', '1.2 g', '0.2 g', '0.9 g'),
-    15: 'It can be either unknown type of fruit or not a fruit.'
+    15: 'Write me if it is edible ^__-'
 }
