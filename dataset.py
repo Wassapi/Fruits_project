@@ -84,7 +84,7 @@ class SubsetSampler(Sampler):
 
 
 fruit_nutrition = namedtuple(
-    "Nutritional value", ['Edible', 'Energy', 'Carbohydrates', 'Sugars', 'Dietary fiber', 'Fat', 'Protein']
+    "Nutrition", ['Edible', 'Energy', 'Carbohydrates', 'Sugars', 'Dietary_fiber', 'Fat', 'Protein']
 )
 
 fruit_description = {
