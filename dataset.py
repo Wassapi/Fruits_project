@@ -1,8 +1,6 @@
 import os
 
 import random
-from typing import Any, Union
-
 from PIL import Image
 from torch.utils.data import Sampler
 from torch.utils.data.dataset import Dataset
@@ -42,7 +40,6 @@ class Fruits(Dataset):
         Args:
             index (int): Indice of the element in the dataset.
         """
-        img_id = None
         img_id = self.list_of_paths[index]
         img = Image.open(img_id).convert('RGB')
         if self.production:  # True when we can't get ground truth label (for new images).
@@ -90,7 +87,7 @@ def message_with_nutrition(index):
     Args:
         index (int): label of the class
     """
-    fruit_nutrition_list = ['Carbohydrates', 'Sugars', 'Dietary_fiber', 'Fat', 'Protein']
+    fruit_nutrition_list = ['Carbohydrates', 'Sugars', 'Dietary fiber', 'Fat', 'Protein']
     fruit_description = [
         ['Edible', 218, 52, 13.81, 10.39, 2.4, 0.17, 0.26],
         ['Edible', 371, 89, 22.84, 12.23, 2.6, 0.33, 1.09],
@@ -139,9 +136,10 @@ def message_with_nutrition(index):
     if index < 15:
         message = random.choice(phrases) + fruit_list[index] + '\n' \
                   + fruit_description[index][0] + '\n' \
-                  + 'Energy: ' + str(fruit_description[index][1]) + ' kcal ' + str(fruit_description[index][2]) + ' kJ' + '\n'
+                  + "Energy: " + str(fruit_description[index][1]) + ' kcal ' \
+                  + str(fruit_description[index][2]) + ' kJ' + '\n'
         for i, element in enumerate(fruit_description[index][3:]):
             message += fruit_nutrition_list[i] + ': ' + str(element) + ' g\n'
     else:
-        message  = fruit_list[index] + '\n\n' + fruit_description[index]
+        message = fruit_list[index] + '\n\n' + str(fruit_description[index])
     return message

@@ -33,7 +33,7 @@ model.load_state_dict(torch.load(
 # Functions for telegram bot
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    """Responds to requests  /start и /help, indroduction to functionality."""
+    """Responds to requests  /start и /help, introduction to functionality."""
     text = ('Hello, I am fruit bot and I can recognize photo with fruits.\n\n'
             + 'I already know following fruits: '
             + (', '.join(list(fruit_list.values())[:-1]))
@@ -76,7 +76,7 @@ def predict_fruit(photo):
     load_loader = torch.utils.data.DataLoader(load_dataset, batch_size=1)
     model.eval()
     predictions = []
-    for k, (inputs, gt, id) in enumerate(load_loader):
+    for k, (inputs, _, _) in enumerate(load_loader):
         prediction = model(inputs)
         _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
