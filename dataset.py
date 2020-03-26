@@ -1,9 +1,11 @@
 import os
 
+import random
+from typing import Any, Union
+
 from PIL import Image
 from torch.utils.data import Sampler
 from torch.utils.data.dataset import Dataset
-from collections import namedtuple
 
 fruit_list = {0: 'Apple', 1: 'Banana', 2: 'Carambola', 3: 'Guava',
               4: 'Kiwi', 5: 'Mango', 6: 'Muskmelon', 7: 'Orange', 8: 'Peach',
@@ -83,52 +85,63 @@ class SubsetSampler(Sampler):
         return len(self.indices)
 
 
-fruit_nutrition = namedtuple(
-    "Nutrition", ['Edible', 'Energy', 'Carbohydrates', 'Sugars', 'Dietary_fiber', 'Fat', 'Protein']
-)
+def message_with_nutrition(index):
+    """Function return message with phrase and nutrition
+    Args:
+        index (int): label of the class
+    """
+    fruit_nutrition_list = ['Carbohydrates', 'Sugars', 'Dietary_fiber', 'Fat', 'Protein']
+    fruit_description = [
+        ['Edible', 218, 52, 13.81, 10.39, 2.4, 0.17, 0.26],
+        ['Edible', 371, 89, 22.84, 12.23, 2.6, 0.33, 1.09],
+        ['Edible', 128, 31, 6.73, 3.98, 2.8, 0.33, 1.04],
+        ['Edible', 285, 68, 14.32, 8.92, 5.4, 0.95, 2.55],
+        ['Edible', 255, 61, 14.66, 8.99, 3, 0.52, 1.14],
+        ['Edible', 250, 60, 15, 13.7, 1.6, 0.38, 0.82],
+        ['Edible', 250, 60, 14.4, 13.9, 1.6, 0.9, 0.9, ],
+        ['Edible', 197, 47, 11.75, 9.35, 2.4, 0.12, 0.94],
+        ['Edible', 274, 65, 16, 14.10, 2.5, 0.42, 1.53],
+        ['Edible', 239, 57, 15.23, 9.75, 3.1, 0.14, 0.36],
+        ['Edible', 293, 70, 18.59, 12.53, 3.6, 0.19, 0.58],
+        ['Edible', 250, 60, 82.14, 82.14, 1.8, 0.3, 3.57],
+        ['Edible', 192, 46, 11.42, 9.92, 1.4, 0.28, 0.7],
+        ['Edible', 346, 83, 18.7, 13.67, 4, 1.17, 1.67],
+        ['Edible', 74, 18, 3.9, 2.6, 1.2, 0.2, 0.9],
+        'I hope it is edible ^-^'
+    ]
+    phrases = [
+        'Say ‘hello’ to my little friend ',
+        'Heeeeere’s Johnny with ',
+        'I know you are , but what am I?',
+        'Surely, you can’t be serious.” – “I am serious, and don’t call me ”',
+        'Dammit, man, I’m a DOCTOR, not a – ',
+        'WHAT IS YOUR MAJOR MALFUNCTION ',
+        'There can be only one ',
+        'THIS IS ',
+        'Houston, we have a ',
+        'Get away from her, you ',
+        'Take your stinking paws off me, you damn dirty ',
+        'I’m too old for this ',
+        'Why so ',
+        'I feel the need…the need for ',
+        'I am your ',
+        'I see dead ',
+        'It’s alive! It’s alive! IT’S ',
+        'I ate his liver with some fava beans and a nice ',
+        'They may take our lives, but they’ll never take…OUR ',
+        'It’s a tr.. ',
+        'I’m the king of the ',
+        'Pay no attention to that man behind the ',
+        'Forget it, Jake. It’s ',
+        'Hasta la vista… '
+    ]
 
-fruit_description = {
-    0: fruit_nutrition('Yes', '218 kJ (52 kcal)', '13.81 g', '10.39 g', '2.4 g', '0.17 g', '0.26 g'),
-    1: fruit_nutrition('Yes', '371 kJ (89 kcal)', '22.84 g', '12.23 g', '2.6 g', '0.33 g', '1.09 g'),
-    2: fruit_nutrition('Yes', '128 kJ (31 kcal)', '6.73 g', '3.98 g', '2.8 g', '0.33 g', '1.04 g'),
-    3: fruit_nutrition('Yes', '285 kJ (68 kcal)', '14.32 g', '8.92 g', '5.4 g', '0.95 g', '2.55 g'),
-    4: fruit_nutrition('Yes', '255 kJ (61 kcal)', '14.66 g', '8.99 g', '3 g', '0.52 g', '1.14 g'),
-    5: fruit_nutrition('Yes', '250 kJ (60 kcal)', '15 g', '13.7 g', '1.6 g', '0.38 g', '0.82 g'),
-    6: fruit_nutrition('Yes', '250 kJ (60 kcal)', '14.4 g', '13.9 g', '1.6 g', '0.9 g', '0.9 g'),
-    7: fruit_nutrition('Yes', '197 kJ (47 kcal)', '11.75 g', '9.35 g', '2.4 g', '0.12 g', '0.94 g'),
-    8: fruit_nutrition('Yes', '274 kJ (65 kcal)', '16 g', '14.10 g', '2.5 g', '0.42 g', '1.53 g'),
-    9: fruit_nutrition('Yes', '239 kJ (57 kcal)', '15.23 g', '9.75 g', '3.1 g', '0.14 g', '0.36 g'),
-    10: fruit_nutrition('Yes', '293 kJ (70 kcal)', '18.59 g', '12.53 g', '3.6 g', '0.19 g', '0.58 g'),
-    11: fruit_nutrition('Yes', '250 kJ (60 kcal)', '82.14 g', '82.14 g', '1.8 g', '0.3 g', '3.57 g'),
-    12: fruit_nutrition('Yes', '192 kJ (46 kcal)', '11.42 g', '9.92 g', '1.4 g', '0.28 g', '0.7 g'),
-    13: fruit_nutrition('Yes', '346 kJ (83 kcal)', '18.7 g', '13.67 g', '4 g', '1.17 g', '1.67 g'),
-    14: fruit_nutrition('Yes', '74 kJ (18 kcal)', '3.9 g', '2.6 g', '1.2 g', '0.2 g', '0.9 g'),
-    15: 'Write me if it is edible ^__-'
-}
-
-phrases = [
-    'Say ‘hello’ to my little friend ',
-    'Heeeeere’s Johnny with ',
-    'I know you are , but what am I?',
-    'Surely, you can’t be serious.” – “I am serious, and don’t call me ”',
-    'Dammit, man, I’m a DOCTOR, not a – ',
-    'WHAT IS YOUR MAJOR MALFUNCTION ',
-    'There can be only one ',
-    'THIS IS ',
-    'Houston, we have a problem ',
-    'Get away from her, you ',
-    'Take your stinking paws off me, you damn dirty ',
-    'I’m too old for this ',
-    'Why so ',
-    'I feel the need…the need for ',
-    'I am your ',
-    'I see dead ',
-    'It’s alive! It’s alive! IT’S ',
-    'I ate his liver with some fava beans and a nice ',
-    'They may take our lives, but they’ll never take…OUR ',
-    'It’s a tr.. ',
-    'I’m the king of the ',
-    'Pay no attention to that man behind the ',
-    'Forget it, Jake. It’s ',
-    'Hasta la vista… '
-]
+    if index < 15:
+        message = random.choice(phrases) + fruit_list[index] + '\n' \
+                  + fruit_description[index][0] + '\n' \
+                  + 'Energy: ' + str(fruit_description[index][1]) + ' kcal ' + str(fruit_description[index][2]) + ' kJ' + '\n'
+        for i, element in enumerate(fruit_description[index][3:]):
+            message += fruit_nutrition_list[i] + ': ' + str(element) + ' g\n'
+    else:
+        message  = fruit_list[index] + '\n\n' + fruit_description[index]
+    return message

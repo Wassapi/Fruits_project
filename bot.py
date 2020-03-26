@@ -1,6 +1,5 @@
 import os
 
-import random
 import requests
 import telebot
 import torch
@@ -9,8 +8,7 @@ from torch.utils.data import Dataset
 from torchvision import models
 from torchvision import transforms
 
-
-from dataset import Fruits, fruit_list, fruit_description, phrases
+from dataset import Fruits, fruit_list, message_with_nutrition
 
 photo_folder = 'demonstration'
 load_folder = os.getcwd() + '/' + photo_folder  # Folder for image loading.
@@ -83,10 +81,8 @@ def predict_fruit(photo):
         _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
         predictions += prediction_semi.tolist()
     bot.reply_to(photo,
-                 [random.choice(phrases)
-                  + fruit_list[i]
-                  + '\n\n'
-                  + str(fruit_description[i]) for i in predictions])
+                 [message_with_nutrition(i) for i in predictions]
+                 )
 
 
 bot.polling(none_stop=True)  # Check new messages.
