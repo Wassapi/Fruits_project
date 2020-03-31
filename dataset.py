@@ -12,10 +12,10 @@ fruit_list = {0: 'Apple', 1: 'Banana', 2: 'Carambola', 3: 'Guava',
 
 
 class Fruits(Dataset):
-    """Create dataset from all images in the folder and subfolders"""
+    """Creates dataset from all images in the folder and subfolders"""
 
     def __init__(self, folder, transform=None, production=False):
-        """Create list of all paths of the files.
+        """Creates list of all paths of the files.
         Args:
             folder (str): Folder name with all images.
             transform (torch.transforms): Augmentation for images (default None).
@@ -32,11 +32,11 @@ class Fruits(Dataset):
         self.production = production
 
     def __len__(self):
-        """Return number of images in the dataset."""
+        """Returns number of images in the dataset."""
         return len(self.list_of_paths)
 
     def __getitem__(self, index):
-        """Return image, class label and file path.
+        """Returns image, class label and file path.
         Args:
             index (int): Indice of the element in the dataset.
         """
@@ -64,26 +64,26 @@ class Fruits(Dataset):
 
 
 class SubsetSampler(Sampler):
-    """Class for Sampler, which return indices in order."""
+    """Class for Sampler."""
 
     def __init__(self, indices):
-        """Create list of indices.
+        """Creates list of indices.
         Args:
             indices (list): List of indices.
         """
         self.indices = indices
 
     def __iter__(self):
-        """Return list of indices."""
+        """Returns list of indices."""
         return (self.indices[i] for i in range(len(self.indices)))
 
     def __len__(self):
-        """Return number of indices in the list."""
+        """Returns number of indices in the list."""
         return len(self.indices)
 
 
 def message_with_nutrition(index):
-    """Function return message with phrase and nutrition
+    """Function returns message with phrase and nutrition.
     Args:
         index (int): label of the class
     """

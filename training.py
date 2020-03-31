@@ -5,7 +5,7 @@ device = torch.device("cuda:0")
 
 def train_model(model, train_loader, val_loader,
                 loss, optimizer, scheduler, num_epochs):
-    """Train model.
+    """Trains model.
     Args:
         model (torch.nn): Model of neuron network.
         train_loader (torch.utils.data.DataLoader): Dataloader for train data.
@@ -34,17 +34,17 @@ def train_model(model, train_loader, val_loader,
             prediction = model(x_gpu)
             loss_value = loss(prediction, y_gpu)  # Loss at the batch.
             optimizer.zero_grad()
-            loss_value.backward()  # Calculate gradients.
-            optimizer.step()  # Change weights depending of the learning rate ratio.
-            _, indices = torch.max(prediction, 1)  # Get predicted class labels.
+            loss_value.backward()  # Calculates gradients.
+            optimizer.step()  # Changes weights depending of the learning rate ratio.
+            _, indices = torch.max(prediction, 1)  # Gets predicted class labels.
 
-            correct_samples += torch.sum(indices == y_gpu)  # Sum number of correct predicted labels in the batch.
-            total_samples += y.shape[0]  # Sum samples from the batch.
-            loss_sum += loss_value  # Sum loss from the batch.
+            correct_samples += torch.sum(indices == y_gpu)  # Sums number of correct predictions.
+            total_samples += y.shape[0]  # Sums samples.
+            loss_sum += loss_value  # Sum loss.
 
         scheduler.step()
 
-        ave_loss = loss_sum / i_step  # Calculate average loss during epoch for all batches.
+        ave_loss = loss_sum / i_step  # Calculate average loss during epoch.
         train_accuracy = float(correct_samples) / total_samples  # Calculate accuracy at train data.
         val_accuracy = compute_accuracy(model, val_loader)  # Calculate accuracy at validation data.
 
@@ -57,7 +57,7 @@ def train_model(model, train_loader, val_loader,
 
 
 def compute_accuracy(model, loader):
-    """Returns accuracy in prediction of class labels for data.
+    """Returns accuracy of predictions.
     Args:
         model (torch.nn): Model of neuron network.
         loader (torch.utils.data.DataLoader): Dataloader for images.

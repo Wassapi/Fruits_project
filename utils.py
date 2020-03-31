@@ -9,7 +9,7 @@ device = torch.device("cuda:0")
 
 
 def visualize_samples(dataset, indices, title=None, count=10):
-    """Show images with given indices.
+    """Shows images.
     Args:
         dataset (torch.utils.data.Dataset): Dataset.
         indices (list): List of indices.
@@ -34,10 +34,8 @@ def visualize_samples(dataset, indices, title=None, count=10):
 
 def predicting_fruit(model, folder='/demonstration', visualize=True, count=10,
                      title=None, title_list=None):
-    """Demonstrate results of the model.
-       
-       Show image with predicted class name.
-       
+    """Shows images with predicted class names.
+
        Args:
            model (torch.nn): Model of neuron network.
            folder (str): Folder with images (default /demonstration).
@@ -47,9 +45,9 @@ def predicting_fruit(model, folder='/demonstration', visualize=True, count=10,
            title_list (dict): Dict with class names and indices (default None).
            
     """
-    # Dataset for image showing.
+    # Dataset for images.
     orig_dataset = Fruits(folder, production=True)
-    # Dataset for predicting of class labels.
+    # Dataset for predictions.
     load_dataset = Fruits(folder,
                           transform=transforms.Compose([
                               transforms.Resize((224, 224)),  # Size for network.
@@ -88,7 +86,7 @@ def predicting_fruit(model, folder='/demonstration', visualize=True, count=10,
 
 
 def image_show(inp, title=None):
-    """Function for showing image from tensor.
+    """Function for showing image.
     Args:
         inp (torch.tensor): Tensor.
         title (str): Title for group of images (default None).

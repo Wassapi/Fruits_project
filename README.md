@@ -1,6 +1,6 @@
 # Telegram bot for fruit recognition.
 
-Often during vacation in tropical counties people meet the problem that there are a lot of different unknown fruits in the local market. Locals are not always able to explain which fruit it is. So this bot will recognize fruit for you!
+This bot will recognize fruit at the photo and help you at local markets all over the world!
 
 ## Project parts:
 
@@ -14,7 +14,7 @@ Neuron network train process.
 
 ### utils.py
 
-Supporting function for image visualization with class name.
+Supporting functions for visualization.
 
 ### fruits_general.ipynb
 
@@ -26,4 +26,4 @@ Demonstration of neuron network functions.
 
 ### bot.py
 
-Scrypt for bot launcing on a remote serverPredicts a fruit class by photo, responds to text messages by template.
+Scrypt for bot launcing on a remote server. Predicts a fruit name by photo, responds to text messages by template.

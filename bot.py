@@ -11,7 +11,7 @@ from torchvision import transforms
 from dataset import Fruits, fruit_list, message_with_nutrition
 
 photo_folder = 'demonstration'
-load_folder = os.getcwd() + '/' + photo_folder  # Folder for image loading.
+load_folder = os.getcwd() + '/' + photo_folder  # Folder for image.
 
 classes_number = len(fruit_list)
 TOKEN = 'YOUR_TOKEN'  # API Telegram token.
@@ -20,7 +20,7 @@ bot = telebot.TeleBot(TOKEN)
 if not os.path.exists(photo_folder):
     os.makedirs(photo_folder)
 
-# Loading of saved model weights.
+# Loads saved model weights.
 model = models.resnet18(pretrained=False)
 num_filters = model.fc.in_features
 model.fc = nn.Linear(num_filters, classes_number)
@@ -30,10 +30,9 @@ model.load_state_dict(torch.load(
 )
 
 
-# Functions for telegram bot
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-    """Responds to requests  /start и /help, introduction to functionality."""
+    """Responds to requests  /start и /help."""
     text = ('Hello, I am fruit bot and I can recognize photo with fruits.\n\n'
             + 'I already know following fruits: '
             + (', '.join(list(fruit_list.values())[:-1]))
@@ -44,16 +43,16 @@ def send_welcome(message):
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    """Responds text messages by requesting of the photo."""
+    """Requests photo answering the text messages."""
     bot.reply_to(message, "Send me the picture of the fruit.")
 
 
 @bot.message_handler(content_types=['photo'])
 def predict_fruit(photo):
-    """Return name of the fruit class as reply to the picture sent by user."""
-    load_path = os.getcwd() + '/' + photo_folder  # Folder for image loading.
+    """Return name of the fruit at the photo."""
+    load_path = os.getcwd() + '/' + photo_folder  # Folder for image.
     try:
-        file_id = photo.json['photo'][1]['file_id']  # Get ID of the picture for loading.
+        file_id = photo.json['photo'][1]['file_id']  # Gets ID of the picture.
     except IndexError:
         file_id = photo.json['photo'][0]['file_id']
     file_info = bot.get_file(file_id)
@@ -63,7 +62,7 @@ def predict_fruit(photo):
     )
     out = open(load_path + '/img.jpg', "wb")
     out.write(file.content)
-    out.close()  # Write image to the file in the folder.
+    out.close()  # Writes image to the file.
 
     load_dataset = Fruits(load_path,
                           transform=transforms.Compose([
@@ -78,11 +77,11 @@ def predict_fruit(photo):
     predictions = []
     for k, (inputs, _, _) in enumerate(load_loader):
         prediction = model(inputs)
-        _, prediction_semi = torch.max(prediction, 1)  # Get class labels.
+        _, prediction_semi = torch.max(prediction, 1)  # Gets class labels.
         predictions += prediction_semi.tolist()
     bot.reply_to(photo,
                  [message_with_nutrition(i) for i in predictions]
                  )
 
 
-bot.polling(none_stop=True)  # Check new messages.
+bot.polling(none_stop=True)  # Checks new messages.
