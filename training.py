@@ -66,7 +66,7 @@ def compute_accuracy(model, loader):
     correct_samples = 0
     all_samples = 0
 
-    for inputs, classes, _ in enumerate(loader):
+    for inputs, classes, _ in loader:
         inputs_gpu = inputs.to(device)
         classes_gpu = classes.to(device)
         prediction = model(inputs_gpu)
